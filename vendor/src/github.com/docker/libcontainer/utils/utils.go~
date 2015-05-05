@@ -74,5 +74,5 @@ func ExitStatus(status syscall.WaitStatus) int {
 
 func GetNetClsClassId() string{
  netclsClassId = netclsClassId + 1
- return strconv.FormatInt(int64(netclsClassId), 10) 
+ return strconv.FormatInt(netclsClassId, 10) 
 }
