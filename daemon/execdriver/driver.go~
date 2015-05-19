@@ -202,7 +202,7 @@ func SetupCgroups(container *configs.Config, c *Command) error {
 		container.Cgroups.MemorySwap = c.Resources.MemorySwap
 		container.Cgroups.CpusetCpus = c.Resources.Cpuset
 		container.Cgroups.NetBandwidth = c.Resources.NetBandwidth
-		container.Cgroups.NetPrio = c.Resources.NetPrio
+		container.Cgroups.NetBandwidth = c.Resources.NetBandwidth
 	}
 
 	return nil

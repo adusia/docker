@@ -55,8 +55,6 @@ type Cgroup struct {
 	// Whether to disable OOM Killer
 	OomKillDisable bool `json:"oom_kill_disable"`
 	
-	NetClsClassId string `json:"NetClsClassId"`
-	
   NetBandwidth int `json:"NetBandwidth"`
   
   NetPrio string `json:"NetPrio"`

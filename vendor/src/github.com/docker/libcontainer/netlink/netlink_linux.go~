@@ -1327,7 +1327,7 @@ func SetContainerBandwidth(iface *net.Interface, NetBandwidth int) error {
 		fmt.Println(er)	
 		fmt.Printf("%s\n",out)	
 	}
-	/*
+	
 	outcls, ercls := exec.Command(tcbinary,"class","add","dev",iface.Name,"parent","10:","classid","10:1","htb", "rate", NetBand ).Output()
 
 	if ercls != nil{
@@ -1343,7 +1343,7 @@ func SetContainerBandwidth(iface *net.Interface, NetBandwidth int) error {
 		fmt.Printf("Error while adding tc filter!!")	
 		fmt.Println(erfltr)	
 		fmt.Printf("%s\n",outfltr)	
-	}	*/
+	}	
 	return nil
 }
 

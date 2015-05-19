@@ -189,12 +189,12 @@ func setupUser(config *initConfig) error {
 
 // setupNetwork sets up and initializes any network interface inside the container.
 func setupNetwork(config *initConfig) error {
-	for _, config := range config.Networks {	
-		strategy, err := getStrategy(config.Type)
+	for _, configNet := range config.Networks {	
+		strategy, err := getStrategy(configNet.Type)
 		if err != nil {
 			return err
 		}
-		if err := strategy.initialize(config); err != nil {
+		if err := strategy.initialize(configNet,config); err != nil {
 			return err
 		}
 	}

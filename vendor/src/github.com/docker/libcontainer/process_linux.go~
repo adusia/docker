@@ -229,7 +229,7 @@ func (p *initProcess) createNetworkInterfaces() error {
 		}
 		
     n.NetPrio = p.config.Config.Cgroups.NetPrio
-    n.NetBandwidth = p.config.Config.Cgroups.NetBandwidth
+    n.NetBandwidth
     
 		if err := strategy.create(n, p.pid()); err != nil {
 			return err

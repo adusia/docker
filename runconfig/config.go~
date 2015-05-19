@@ -34,7 +34,6 @@ type Config struct {
 	MacAddress      string
 	OnBuild         []string
 	NetBandwidth    int
-	NetPrio         string
 }
 
 func ContainerConfigFromJob(job *engine.Job) *Config {

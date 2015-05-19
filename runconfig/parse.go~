@@ -69,7 +69,7 @@ func Parse(cmd *flag.FlagSet, args []string) (*Config, *HostConfig, *flag.FlagSe
 		flRestartPolicy   = cmd.String([]string{"-restart"}, "no", "Restart policy to apply when a container exits")
 		flReadonlyRootfs  = cmd.Bool([]string{"-read-only"}, false, "Mount the container's root filesystem as read only")
 		flNetBandwidth    = cmd.Int([]string{"nb", "-net-bandwidth"}, 0, "Network Bandwidth")
-		flNetPrio         = cmd.String([]string{"-prio", "-net-prio"}, "default", "Network Priority")
+		flNetPrio         = cmd.String([]string{"-prio", "-net-prio"}, "", "Network Priority")
 	)
 
 	cmd.Var(&flAttach, []string{"a", "-attach"}, "Attach to STDIN, STDOUT or STDERR")

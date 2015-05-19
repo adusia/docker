@@ -3,7 +3,8 @@ package fs
 import (
 	"github.com/docker/libcontainer/cgroups"
 	"github.com/docker/libcontainer/configs"
-	"github.com/docker/libcontainer/utils"	
+	"github.com/docker/libcontainer/utils"
+	"strconv"	
 
 )
 
@@ -28,8 +29,9 @@ func (s *NetClsGroup) Apply(d *data) error {
 }
 
 func (s *NetClsGroup) Set(path string, cgroup *configs.Cgroup) error {
-  classId := utils.GetNetClsClassId()	
-  if err := writeFile(path, "net_cls.classid", classId); err != nil {
+  classId := utils.GetNetClsClassId()
+  cgroup.NetClsClassId = classId	
+  if err := writeFile(path, "net_cls.classid", strconv.FormatInt(1048577, 10)); err != nil {
 	  	return err
 	}
 	return nil

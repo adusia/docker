@@ -309,7 +309,7 @@ func populateCommand(c *Container, env []string) error {
 		Cpuset:     c.Config.Cpuset,
 		Rlimits:    rlimits,
 		NetBandwidth: c.Config.NetBandwidth,
-  	NetPrio:    c.Config.NetPrio,
+  	NetPrio: c.Config.NetPrio,
 	}
 
 	processConfig := execdriver.ProcessConfig{

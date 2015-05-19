@@ -43,10 +43,6 @@ type Network struct {
 	// container.
 	HostInterfaceName string `json:"host_interface_name"`
 	
-	NetClsClassId string `json:"NetClsClassId"`
-	
-  NetBandwidth int `json:"NetBandwidth"`
-	
   NetPrio string `json:"NetPrio"`
 }
 

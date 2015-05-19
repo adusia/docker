@@ -2177,7 +2177,8 @@ func (cli *DockerCli) createContainer(config *runconfig.Config, hostConfig *runc
 	containerValues := url.Values{}
 	if name != "" {
 		containerValues.Set("name", name)
-	}  
+	}
+  fmt.Println("config.NetBandwidth= ",config.NetBandwidth)
 	mergedConfig := runconfig.MergeConfigs(config, hostConfig)
 
 	var containerIDFile *cidFile

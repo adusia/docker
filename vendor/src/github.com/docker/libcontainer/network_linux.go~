@@ -207,7 +207,7 @@ func (v *veth) initialize(config *network) error {
 			return err
 		}
 	}
-	if err := netlink.NetworkSetMTU(child, config.Mtu); err != nil {
+	if err := netlink.NetworkSetMTU(child, configNet.Mtu); err != nil {
 		return err
 	}
 	if err := netlink.NetworkLinkUp(child); err != nil {
