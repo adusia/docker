@@ -1356,7 +1356,7 @@ sudo tc qdisc add dev $DEV parent 2:2 handle 20: sfq perturb 20
 sudo tc qdisc add dev $DEV parent 2:3 handle 30: sfq perturb 20
 */
 func InstallPriorityQueue() error {
-
+  fmt.Println("Installing TBF and PRIO queu")
   tcbinary, err := exec.LookPath("tc")  
 	if err != nil{
 		fmt.Printf("Error while LookPath command!!!!!!!!")
@@ -1394,10 +1394,10 @@ func ContainerNetworkPriority(netPrio string, IPAddress string ) error{
 
   if netPrio == "high" {
     containerPriority = 1
-   } else if netPrio == "default" {
-    containerPriority = 2
-   } else {   
+   } else if netPrio == "low" {
     containerPriority = 3
+   } else {   
+    containerPriority = 2
    }
    
    fmt.Println("containerPriority=",containerPriority)
@@ -1407,10 +1407,9 @@ func ContainerNetworkPriority(netPrio string, IPAddress string ) error{
 		fmt.Printf("Error while LookPath command!!!!!!!!")
 	}
 	
-	_, errFilter := exec.Command(tcbinary, "filter", "add", "dev", "docker0", "protocol","ip","parent", "2:0", "prio","1", "u32", "match", "ip", "dst", IP, "flowid", fmt.Sprintf("2:%d",containerPriority)).Output()
-	if errFilter != nil{
-		fmt.Printf("Error while assigning priority to container")				
-	}
+	_, _ = exec.Command(tcbinary, "filter", "add", "dev", "docker0", "protocol","ip","parent", "2:0", "prio","1", "u32", "match", "ip", "dst", IP, "flowid", fmt.Sprintf("2:%d",containerPriority)).Output()
+		
+//	_, _ = exec.Command(tcbinary, "filter", "add", "dev", "docker0", "protocol","ip","parent", "2:0", "prio","1", "u32", "match", "ip", "src", IP, "flowid", fmt.Sprintf("2:%d",containerPriority)).Output()
 	
   return nil
 }
