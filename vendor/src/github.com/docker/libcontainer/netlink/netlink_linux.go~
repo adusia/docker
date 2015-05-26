@@ -1309,6 +1309,7 @@ func ChangeName(iface *net.Interface, newName string) error {
 	return nil
 }
 
+// This method is used to add a TBF to container's veth interface in the container's namespace.
 func SetContainerBandwidth(iface *net.Interface, NetBandwidth int) error {
   NetBand := fmt.Sprintf("%dkbps",NetBandwidth)  
   burst := fmt.Sprintf("%dkb",NetBandwidth/10) 
@@ -1317,9 +1318,7 @@ func SetContainerBandwidth(iface *net.Interface, NetBandwidth int) error {
 	if err != nil{
 		fmt.Printf("Error while LookPath command!!!!!!!!")
 	}
-  //sudo tc qdisc add dev eth0 root tbf rate 10000kbps burst 1000kb latency 70ms  mtu 1540
 
-	//out, er := exec.Command(tcbinary, "qdisc", "add", "dev", iface.Name, "root", "handle", "10:", "htb").Output()
 	out, er := exec.Command(tcbinary, "qdisc", "add", "dev", iface.Name, "root", "tbf", "rate", NetBand, "burst", burst, "latency", "70ms", "mtu", "1540").Output()
 
 	if er != nil{
@@ -1327,57 +1326,39 @@ func SetContainerBandwidth(iface *net.Interface, NetBandwidth int) error {
 		fmt.Println(er)	
 		fmt.Printf("%s\n",out)	
 	}
-	/*
-	outcls, ercls := exec.Command(tcbinary,"class","add","dev",iface.Name,"parent","10:","classid","10:1","htb", "rate", NetBand ).Output()
-
-	if ercls != nil{
-	 	fmt.Printf("Error while adding tc class!!")	
-	  fmt.Println(ercls)	
-	  fmt.Printf("%s\n",outcls)	
-	}
-   //sudo tc filter add dev eth0 parent 10: protocol ip prio 1 u32 match ip src 0.0.0.0/0 
-	outfltr, erfltr := exec.Command(tcbinary,"filter","add","dev",iface.Name,"parent","10:","protocol","ip","prio","1","handle", "1:", "cgroup").Output()
-	//outfltr, erfltr := exec.Command(tcbinary,"filter","add","dev",iface.Name,"parent","10:","protocol","ip","prio","1","u32", "match", "ip", "src", "0.0.0.0/0").Output()
-
-	if erfltr != nil{
-		fmt.Printf("Error while adding tc filter!!")	
-		fmt.Println(erfltr)	
-		fmt.Printf("%s\n",outfltr)	
-	}	*/
+	
 	return nil
 }
 
-/*
-sudo tc qdisc del dev $DEV root
-sudo tc qdisc add dev $DEV root handle 1: tbf rate 100mbps burst 1600 limit 1
-sudo tc qdisc add dev $DEV parent 1:1 handle 2: prio bands 3
-sudo tc qdisc add dev $DEV parent 2:1 handle 10: sfq perturb 20
-sudo tc qdisc add dev $DEV parent 2:2 handle 20: sfq perturb 20
-sudo tc qdisc add dev $DEV parent 2:3 handle 30: sfq perturb 20
-*/
+// This method is called to install a priority queue TC Prio on docker0
 func InstallPriorityQueue() error {
-  fmt.Println("Installing TBF and PRIO queu")
+
+  // Find the path of TC binary 
   tcbinary, err := exec.LookPath("tc")  
 	if err != nil{
 		fmt.Printf("Error while LookPath command!!!!!!!!")
 	}
 	
+	// Delete any previously installed qdisc on docker0
 	_, errDel := exec.Command(tcbinary, "qdisc", "del", "dev", "docker0", "root").Output()
 	if errDel != nil{
 		fmt.Printf("Error while deleting priority queue")				
 	}
 	
+	// Install a classless TBF qdisc, which becomes parent to PRIO qdisc.
+	// Having TBF as a parent qdisc helps in bandwidth sharing
 	_, errTBF := exec.Command(tcbinary, "qdisc", "add", "dev", "docker0", "root", "handle", "1:", "tbf", "rate", "100mbps", "burst", "1600", "limit", "1").Output()  
   if errTBF != nil{
 		fmt.Printf("Error while installing tbf queue")	
 	}
 	
+	// Install classful PRIO qdisc with default 3 classes/bands
 	_, errPrio := exec.Command(tcbinary, "qdisc", "add", "dev", "docker0", "parent", "1:1", "handle", "2:", "prio", "bands", "3").Output()  
   if errPrio != nil{
 		fmt.Printf("Error while installing priority queue")	
 	}
-	
-  //var er error
+
+  // Install SFQ qdisc on each of the classes of PRIO qdisc.
   for i:=1; i<4; i++{
   _, _ = exec.Command(tcbinary, "qdisc", "add", "dev", "docker0", "parent", fmt.Sprintf("2:%d",i), "handle", fmt.Sprintf("%d:",i*10), "sfq", "perturb", "20").Output() 
   }
@@ -1385,7 +1366,7 @@ func InstallPriorityQueue() error {
 	return nil
 }
 
-//sudo tc filter add dev $DEV protocol ip parent 2:0 prio 1 u32 match ip dst 172.17.0.13/32 flowid 2:1
+// This method is called to add a filter rule to TC prio qdisc based on the IP address of a container.
 func ContainerNetworkPriority(netPrio string, IPAddress string ) error{  
 
   IP := strings.Replace(IPAddress,"/16","/32", 1)
@@ -1408,8 +1389,6 @@ func ContainerNetworkPriority(netPrio string, IPAddress string ) error{
 	}
 	
 	_, _ = exec.Command(tcbinary, "filter", "add", "dev", "docker0", "protocol","ip","parent", "2:0", "prio","1", "u32", "match", "ip", "dst", IP, "flowid", fmt.Sprintf("2:%d",containerPriority)).Output()
-		
-	_, _ = exec.Command(tcbinary, "filter", "add", "dev", "docker0", "protocol","ip","parent", "2:0", "prio","1", "u32", "match", "ip", "src", IP, "flowid", fmt.Sprintf("2:%d",containerPriority)).Output()
 	
   return nil
 }

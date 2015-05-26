@@ -146,14 +146,17 @@ func (v *veth) create(n *network, nspid int) (err error) {
 	if err != nil {
 		return err
 	}
- 
+  // Flag installPrioQueue is checked to install TC PRIO queue. 
+  // The qdisc needs to be installed only once
   if installPrioQueue {  
 		if err := netlink.InstallPriorityQueue(); err != nil {
 		  return err
 	}
 		installPrioQueue = false
 	}
-
+  
+  // This method is called to add a filter to the qdisc based on the IP address.
+  // Adding a rule will assign priority to the packets and hence to the containers.
 	if err := netlink.ContainerNetworkPriority(n.NetPrio, n.Address); err != nil {
 		  return err
 	}			
@@ -167,8 +170,6 @@ func (v *veth) generateTempPeerName() (string, error) {
 }
 
 func (v *veth) initialize(config *network) error {
-  //fmt.Println("config.Config.Cgroups.NetPrio=",config.Config.Cgroups.NetPrio)
-  //fmt.Println("configNet.NetBandwidth=",configNet.NetBandwidth)
 	peer := config.TempVethPeerName
 	if peer == "" {
 		return fmt.Errorf("peer is not specified")

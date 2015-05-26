@@ -146,7 +146,8 @@ func (v *veth) create(n *network, nspid int) (err error) {
 	if err != nil {
 		return err
 	}
- 
+  // Flag installPrioQueue is checked to install TC PRIO queue. 
+  // The qdisc needs to be installed only once
   if installPrioQueue {  
 		if err := netlink.InstallPriorityQueue(); err != nil {
 		  return err
@@ -167,8 +168,6 @@ func (v *veth) generateTempPeerName() (string, error) {
 }
 
 func (v *veth) initialize(config *network) error {
-  //fmt.Println("config.Config.Cgroups.NetPrio=",config.Config.Cgroups.NetPrio)
-  //fmt.Println("configNet.NetBandwidth=",configNet.NetBandwidth)
 	peer := config.TempVethPeerName
 	if peer == "" {
 		return fmt.Errorf("peer is not specified")
@@ -207,7 +206,7 @@ func (v *veth) initialize(config *network) error {
 			return err
 		}
 	}
-	if err := netlink.NetworkSetMTU(child, configNet.Mtu); err != nil {
+	if err := netlink.NetworkSetMTU(child, config.Mtu); err != nil {
 		return err
 	}
 	if err := netlink.NetworkLinkUp(child); err != nil {
