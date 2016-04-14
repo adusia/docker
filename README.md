@@ -1,3 +1,34 @@
+# Notes in reference to ISC 2016 Paper
+## Relevant Commits
+Commit Description | Commit Links
+----------- | ------------
+Added code for network priority and bandwidth | [fa2a714](https://github.com/docker/docker/commit/fa2a714)
+Added comments and did code cleanup | [603009c](https://github.com/docker/docker/commit/603009c)
+
+## Relevant Files:
+* [process_linux.go](vendor/src/github.com/docker/libcontainer/process_linux.go)
+* [network_linux.go](vendor/src/github.com/docker/libcontainer/network_linux.go)
+* [netlink_linux.go](vendor/src/github.com/docker/libcontainer/netlink/netlink_linux.go)
+* [network.go](vendor/src/github.com/docker/libcontainer/configs/network.go)
+* [parse.go](runconfig/parse.go)
+* [config.go](runconfig/config.go)
+* [driver.go](daemon/execdriver/driver.go)
+
+## Paper Information
+Stephen Herbein, Ayush Dusia, Aaron Landwehr, Sean McDaniel, Jose Monsalve, Yang Yang, Seetharami R. Seelam, and Michela Taufer. Resource Management for Running HPC Applications in Container Clouds. In _Proceedings of 31st International Supercomputing Conference_, ISC, Leipzig, Germany, June 2016.
+```
+@inproceedings{Docker-ISC,
+author = {Stephen Herbein and Ayush Dusia and Aaron Landwehr and Sean McDaniel and Jose Monsalve and Yang Yang and Seetharami R. Seelam and Michela Taufer},
+title={Resource Management for Running HPC Applications in Container Clouds},
+booktitle={Proceedings of 31st International Supercomputing Conference},
+series = {ISC},
+year={2016},
+month={June},
+address = {Leipzig, Germany},
+}
+```
+
+
 Docker: the Linux container engine
 ==================================
 
